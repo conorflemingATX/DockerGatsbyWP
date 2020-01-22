@@ -1,5 +1,5 @@
 import React, { Component } from "react"
-import { Link, graphql, StaticQuery } from "gatsby"
+import { graphql } from "gatsby"
 
 import Layout from "../components/layout"
 

@@ -21,8 +21,6 @@ exports.createPages = async ({ graphql, actions }) => {
           node {
             id
             slug
-            status
-            template
           }
         }
       }
@@ -31,9 +29,6 @@ exports.createPages = async ({ graphql, actions }) => {
           node {
             id
             slug
-            status
-            template
-            format
           }
         }
       }
@@ -65,8 +60,8 @@ exports.createPages = async ({ graphql, actions }) => {
       path: `/${edge.node.slug}`,
       component: slash(pageTemplate),
       context: {
-        id: edge.node.id,
-      },
+        id: edge.node.id
+      }
     })
   })
 
@@ -79,8 +74,8 @@ exports.createPages = async ({ graphql, actions }) => {
       path: `/blog/${edge.node.slug}`,
       component: slash(postTemplate),
       context: {
-        id: edge.node.id,
-      },
+        id: edge.node.id
+      }
     })
   })
 }
