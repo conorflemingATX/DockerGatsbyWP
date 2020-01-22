@@ -1,0 +1,9 @@
+.git
+.gitignore
+.gitkeep
+LICENSE
+VERSION
+README.md
+Changelog.md
+docker-compose.*.yml
+node_modules
