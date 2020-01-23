@@ -1,5 +1,5 @@
-const path = require(`path`)
-const slash = require(`slash`)
+const path = require(`path`);
+const slash = require(`slash`);
 
 // Implement the Gatsby API “createPages”. This is
 // called after the Gatsby bootstrap is finished so you have
@@ -8,7 +8,7 @@ const slash = require(`slash`)
 // Will create pages for WordPress pages (route : /{slug})
 // Will create pages for WordPress posts (route : /post/{slug})
 exports.createPages = async ({ graphql, actions }) => {
-  const { createPage } = actions
+  const { createPage } = actions;
 
   // The “graphql” function allows us to run arbitrary
   // queries against the local Gatsby GraphQL schema. Think of
@@ -29,21 +29,25 @@ exports.createPages = async ({ graphql, actions }) => {
           node {
             id
             slug
+            excerpt
+            date
+            title
+            content
           }
         }
       }
     }
-  `)
+  `);
 
   // Check for any errors
   if (result.errors) {
-    throw new Error(result.errors)
+    throw new Error(result.errors);
   }
 
   // Access query results via object destructuring
-  const { allWordpressPage, allWordpressPost } = result.data
+  const { allWordpressPage, allWordpressPost } = result.data;
 
-  const pageTemplate = path.resolve(`./src/templates/page.js`)
+  const pageTemplate = path.resolve(`./src/templates/page.js`);
   // We want to create a detailed page for each
   // page node. We'll just use the WordPress Slug for the slug.
   // The Page ID is prefixed with 'PAGE_'
@@ -51,7 +55,7 @@ exports.createPages = async ({ graphql, actions }) => {
     // Gatsby uses Redux to manage its internal state.
     // Plugins and sites can use functions like "createPage"
     // to interact with Gatsby.
-    if (edge.node.page_type === 'custom') return;
+    if (edge.node.page_type === "custom") return;
     createPage({
       // Each page is required to have a `path` as well
       // as a template component. The `context` is
@@ -62,10 +66,10 @@ exports.createPages = async ({ graphql, actions }) => {
       context: {
         id: edge.node.id
       }
-    })
-  })
+    });
+  });
 
-  const postTemplate = path.resolve(`./src/templates/post.js`)
+  const postTemplate = path.resolve(`./src/templates/post.js`);
   // We want to create a detailed page for each
   // post node. We'll just use the WordPress Slug for the slug.
   // The Post ID is prefixed with 'POST_'
@@ -76,6 +80,25 @@ exports.createPages = async ({ graphql, actions }) => {
       context: {
         id: edge.node.id
       }
-    })
-  })
-}
+    });
+  });
+
+  const postsPerPage = 5;
+  const totalPages = Math.ceil(allWordpressPost.edges.length / postsPerPage);
+  const blogPostListTemplate = path.resolve("./src/templates/blogPostList.js");
+
+  Array.from({ length: totalPages }).forEach((_, index) => {
+    createPage({
+      path: index === 0 ? `/blog` : `/blog/${index + 1}`,
+      component: slash(blogPostListTemplate),
+      context: {
+        posts: allWordpressPost.edges.slice(
+          index * postsPerPage,
+          index * postsPerPage + postsPerPage
+        ),
+        totalPages,
+        currentPage: index + 1
+      }
+    });
+  });
+};
